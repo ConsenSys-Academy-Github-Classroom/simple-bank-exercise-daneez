@@ -1,14 +1,4 @@
-/*
-
-The public version of the file used for testing can be found here: https://gist.github.com/ConsenSys-Academy/ce47850a8e2cba6ef366625b665c7fba
-
-This test file has been updated for Truffle version 5.0. If your tests are failing, make sure that you are
-using Truffle version 5.0. You can check this by running "trufffle version"  in the terminal. If version 5 is not
-installed, you can uninstall the existing version with `npm uninstall -g truffle` and install the latest version (5.0)
-with `npm install -g truffle`.
-
-*/
-// const { catchRevert } = require("./exceptionsHelpers.js");
+const { catchRevert } = require("./exceptionsHelpers.js");
 var SimpleBank = artifacts.require("./SimpleBank.sol");
 const { expectRevert } = require('@openzeppelin/test-helpers');
 
@@ -20,21 +10,13 @@ contract("SimpleBank", function (accounts) {
     instance = await SimpleBank.new();
   });
 
-//   it("ready to be solved!", async() => {
-//     const eth1000 = 1e21;
-//     // const aliceBalace = await web3.eth.getBalance(alice);
-//     // console.log(aliceBalance);
-//     assert.equal(await web3.eth.getBalance(alice), eth1000);
-//   });
+  it("ready to be solved!", async() => {
+    const eth100 = 100e18;
+    assert.equal(await web3.eth.getBalance(alice), eth100);
+  });
 
   it("is owned by owner", async () => {
     assert.equal(
-      // Hint:
-      //   the error `TypeError: Cannot read property 'call' of undefined`
-      //   will be fixed by setting the correct visibility specifier. See
-      //   the following two links
-      //   1: https://docs.soliditylang.org/en/v0.8.5/cheatsheet.html?highlight=visibility#function-visibility-specifiers
-      //   2: https://docs.soliditylang.org/en/v0.8.5/contracts.html#getter-functions
       await instance.owner.call(),
       contractOwner,
       "owner is not correct",
@@ -77,11 +59,11 @@ contract("SimpleBank", function (accounts) {
     await instance.enroll({ from: alice });
     const result = await instance.deposit({ from: alice, value: deposit });
 
-    const expectedEventResult = { accountAddress: alice, amount: deposit };
+    const expectedEventResult = { accountAddress: alice, depositAmount: deposit };
 
     const logAccountAddress = result.logs[0].args.accountAddress;
-    const logDepositAmount = result.logs[0].args.amount.toNumber();
-
+    const logDepositAmount = result.logs[0].args.depositAmount.toNumber();
+    // console.log(result.logs[0].args);
     assert.equal(
       expectedEventResult.accountAddress,
       logAccountAddress,
@@ -89,7 +71,7 @@ contract("SimpleBank", function (accounts) {
     );
 
     assert.equal(
-      expectedEventResult.amount,
+      expectedEventResult.depositAmount,
       logDepositAmount,
       "LogDepositMade event amount property not emitted, check deposit method",
     );
